@@ -1,36 +1,29 @@
-/* EXAMPLE - EXAMPLE - EXAMPLE - EXAMPLE - EXAMPLE - EXAMPLE - EXAMPLE
-(function() {
-  'use strict';
-  angular.module('SOGo.Common')
-    .config(configure)
+(function () {
+  "use strict";
 
-  configure.$inject = ['$mdThemingProvider'];
+  angular.module("SOGo.Common").config(configure);
+
+  configure.$inject = ["$mdThemingProvider"];
+
   function configure($mdThemingProvider) {
-    var greyMap = $mdThemingProvider.extendPalette('grey', {
-      '200': 'F5F5F5',
-      '300': 'E5E5E5',
-      '1000': '4C566A'
-    });
-    var greenCow = $mdThemingProvider.extendPalette('green', {
-      '600': 'E5E5E5'
-    });
-    $mdThemingProvider.definePalette('frost-grey', greyMap);
-    $mdThemingProvider.definePalette('green-cow', greenCow);
-    $mdThemingProvider.theme('default')
-      .primaryPalette('green-cow', {
-        'default': '400',
-        'hue-1': '400',
-        'hue-2': '600',
-        'hue-3': 'A700'
+    // Pick a color pallete: 'indigo', 'teal', 'cyan', 'blue', 'light-freen' etc.
+    // https://m1.material.io/style/color.html#color-color-palette
+    var predominant_color = "indigo";
+
+    $mdThemingProvider
+      .theme("default")
+      .primaryPalette(predominant_color, {
+        default: "600", // Top toolbar - Professional indigo
+        "hue-1": "100", // Secondary elements
+        "hue-2": "500", // Sidebar toolbar - Deeper tone
       })
-      .accentPalette('green', {
-        'default': '600',
-        'hue-1': '300',
-        'hue-2': '300',
-        'hue-3': 'A700'
-      })
-      .backgroundPalette('frost-grey');
+      .accentPalette(predominant_color, {
+        default: "100", // FAB buttons - Elegant blue
+        "hue-1": "200", // Center list toolbar
+        "hue-2": "200", // Selected items - Subtle highlight
+      });
+
+    // Optimize performance
     $mdThemingProvider.generateThemesOnDemand(false);
   }
 })();
- */
