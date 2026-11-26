@@ -1,8 +1,6 @@
 <?php
 
 $config['product_name'] = 'Uptempo Mail';
-$config['max_message_size'] = '20M';
-$config['uptempo_download_origin'] = 'https://mail.cloudfan.shop';
 
 // Both Docker services present the certificate issued for Mailcow's hostname.
 $config['imap_conn_options'] = [
