@@ -4,8 +4,6 @@ services:
   webmail:
     image: roundcube/roundcubemail:1.7.7-apache
     restart: unless-stopped
-    depends_on:
-      - uploads
     ports:
       - "127.0.0.1:18081:80"
       - "10.77.0.16:18081:80"
@@ -16,14 +14,16 @@ services:
       ROUNDCUBEMAIL_SMTP_SERVER: tls://postfix
       ROUNDCUBEMAIL_SMTP_PORT: "587"
       ROUNDCUBEMAIL_DB_TYPE: sqlite
-      ROUNDCUBEMAIL_PLUGINS: archive,zipdownload,uptempo_files
-      UPTEMPO_LARGE_UPLOADS: ${UPTEMPO_LARGE_UPLOADS:-1}
+      ROUNDCUBEMAIL_SKIN: gmail
     volumes:
       - webmail:/var/www/html
       - preferences:/var/roundcube/db
-      - upload_data:/srv/tusd-data:ro
-      - ./plugins/uptempo_files:/var/www/html/plugins/uptempo_files:ro
-      - ./plugins/uptempo_files/download.php:/var/www/html/public_html/large-download.php:ro
+      - type: bind
+        source: ./skins/gmail
+        target: /var/www/html/skins/gmail
+        read_only: true
+        bind:
+          create_host_path: false
       - type: bind
         source: ./mailcow.inc.php
         target: /var/roundcube/config/mailcow.inc.php
@@ -38,36 +38,12 @@ services:
           create_host_path: false
     networks:
       - mailcow
-      - files
-
-  uploads:
-    image: tusproject/tusd:v2.10.3@sha256:96c48f09e37eb61d9d9afb538e172aadd77c9feb0a29f11c43c521b7dc332286
-    restart: unless-stopped
-    command: ["-upload-dir=/srv/tusd-data", "-max-size=1000000000", "-disable-download"]
-    volumes:
-      - upload_data:/srv/tusd-data
-    networks: [files]
-
-  upload-cleanup:
-    image: roundcube/roundcubemail:1.7.7-apache
-    restart: unless-stopped
-    user: "33:33"
-    depends_on: [webmail, uploads]
-    entrypoint: ["sh", "-c", "while :; do if [ -w /var/roundcube/db ] && php /opt/uptempo/cleanup.php; then sleep 3600; else sleep 60; fi; done"]
-    volumes:
-      - preferences:/var/roundcube/db
-      - upload_data:/srv/tusd-data:ro
-      - ./plugins/uptempo_files:/opt/uptempo:ro
-    networks: [files]
 
 networks:
-  files:
-    internal: true
   mailcow:
     external: true
     name: mailcowdockerized_mailcow-network
 
 volumes:
-  upload_data:
   webmail:
   preferences:
